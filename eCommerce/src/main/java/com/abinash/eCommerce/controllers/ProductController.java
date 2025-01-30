@@ -49,8 +49,17 @@ public class ProductController {
     }
 
     @PatchMapping("/{productId}")
-    public String updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductDto productDto){
-        return null;
+    public Product updateProduct(@PathVariable("productId") Long productId, @RequestBody ProductDto productDto){
+        Product product = new Product();
+        product.setId(productId);
+        product.setTitle(productDto.getTitle());
+        product.setDescription(productDto.getDescription());
+        product.setPrice(productDto.getPrice());
+        product.setImageURL(productDto.getImage());
+        Category category = new Category();
+        category.setCategoryName(productDto.getCategory());
+        product.setCategory(category);
+        return productService.updateProduct(productId, product);
     }
 
     @DeleteMapping("/{productId}")
