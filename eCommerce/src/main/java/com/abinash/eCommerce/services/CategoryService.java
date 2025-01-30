@@ -1,10 +1,13 @@
 package com.abinash.eCommerce.services;
 
+import com.abinash.eCommerce.models.Product;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 public interface CategoryService {
-    String getProductsInCategory(int productId);
+    List<Product> getProductsInCategory(String category);
 
-    String getAllCategories();
+    List<String> getAllCategories();
 }

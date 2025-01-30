@@ -1,17 +1,20 @@
 package com.abinash.eCommerce.services;
 
+import com.abinash.eCommerce.models.Product;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.List;
 
 public class CategoryServiceImpl implements CategoryService {
 
     @Override
-    public String getProductsInCategory(int productId) {
-        return "Here is the list of Products in the category" + productId;
+    public List<Product> getProductsInCategory(String category) {
+        return null;
     }
 
     @Override
-    public String getAllCategories() {
-        return "Category List";
+    public List<String> getAllCategories() {
+        return null;
     }
 }
