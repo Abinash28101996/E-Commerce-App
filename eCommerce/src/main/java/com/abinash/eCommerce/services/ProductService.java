@@ -2,16 +2,16 @@ package com.abinash.eCommerce.services;
 
 import com.abinash.eCommerce.dtos.ProductDto;
 import com.abinash.eCommerce.models.Product;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface ProductService {
 
     List<Product> getProducts();
 
 
-    Product getSingleProduct(Long productId);
+    Optional<Product> getSingleProduct(Long productId);
 
 
     Product addProduct(ProductDto productDto);

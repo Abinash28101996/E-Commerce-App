@@ -1,8 +1,10 @@
 package com.abinash.eCommerce.controllers;
 
 import com.abinash.eCommerce.dtos.AddProductResponseDto;
+import com.abinash.eCommerce.dtos.ErrorResponseDto;
 import com.abinash.eCommerce.dtos.ProductDto;
 import com.abinash.eCommerce.dtos.SingleProductResponseDto;
+import com.abinash.eCommerce.exceptions.NotFoundException;
 import com.abinash.eCommerce.models.Category;
 import com.abinash.eCommerce.models.Product;
 import com.abinash.eCommerce.services.ProductService;
@@ -13,6 +15,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -30,12 +33,18 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<SingleProductResponseDto> getSingleProduct(@PathVariable("productId") Long productId){
+    public ResponseEntity<SingleProductResponseDto> getSingleProduct (@PathVariable("productId") Long productId) throws NotFoundException {
         SingleProductResponseDto singleProductResponseDto = new SingleProductResponseDto();
-        singleProductResponseDto.setProduct(productService.getSingleProduct(productId));
+        Optional<Product> optionalProduct = productService.getSingleProduct(productId);
+        if (optionalProduct.isEmpty()) {
+            throw new NotFoundException("Product with id " + productId + " not found");
+        }
+        singleProductResponseDto.setProduct(productService.getSingleProduct(productId).get());
+
         MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
         headers.add("auth-token",  "noAccessBuddy");
         headers.add("Behaviour",  "Bad");
+
         ResponseEntity<SingleProductResponseDto> response = new ResponseEntity<>(singleProductResponseDto, headers, HttpStatus.NOT_FOUND);
 
 
@@ -66,4 +75,6 @@ public class ProductController {
     public String deleteProduct(@PathVariable("productId") Long productId){
         return "The product with id " + productId + " was deleted";
     }
+
+
 }

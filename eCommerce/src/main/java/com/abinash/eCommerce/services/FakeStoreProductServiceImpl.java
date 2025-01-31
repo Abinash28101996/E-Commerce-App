@@ -2,6 +2,7 @@ package com.abinash.eCommerce.services;
 
 import com.abinash.eCommerce.dtos.FakeStoreProductDto;
 import com.abinash.eCommerce.dtos.ProductDto;
+import com.abinash.eCommerce.exceptions.NotFoundException;
 import com.abinash.eCommerce.models.Category;
 import com.abinash.eCommerce.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -16,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -61,12 +63,16 @@ public class FakeStoreProductServiceImpl implements ProductService{
     }
 
     @Override
-    public Product getSingleProduct(Long productId) {
+    public Optional<Product> getSingleProduct(Long productId) {
         RestTemplate restTemplate = restTemplateBuilder.build();
         ResponseEntity<FakeStoreProductDto> response = restTemplate.getForEntity("https://fakestoreapi.com/products/{productId}", FakeStoreProductDto.class, productId);
         FakeStoreProductDto productDto = response.getBody();
+
+        if(productDto == null) {
+            return Optional.empty();
+        }
         Product product = convertFakeProductDtoToProduct(productDto);
-        return product;
+        return Optional.of(product);
     }
 
     @Override
