@@ -1,4 +1,4 @@
-package com.abinash.eCommerce.dtos;
+package com.abinash.eCommerce.clients;
 
 //For each of the third party api create Dtos independently
 

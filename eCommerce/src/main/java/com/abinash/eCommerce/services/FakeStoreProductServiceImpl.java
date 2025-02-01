@@ -1,8 +1,8 @@
 package com.abinash.eCommerce.services;
 
-import com.abinash.eCommerce.dtos.FakeStoreProductDto;
+import com.abinash.eCommerce.clients.FakeStoreClient;
+import com.abinash.eCommerce.clients.FakeStoreProductDto;
 import com.abinash.eCommerce.dtos.ProductDto;
-import com.abinash.eCommerce.exceptions.NotFoundException;
 import com.abinash.eCommerce.models.Category;
 import com.abinash.eCommerce.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -23,18 +23,21 @@ import java.util.Optional;
 @Service
 public class FakeStoreProductServiceImpl implements ProductService{
 
+    private final FakeStoreClient fakeStoreClient;
     private final RestTemplateBuilder restTemplateBuilder;
 
-    public FakeStoreProductServiceImpl(RestTemplateBuilder restTemplateBuilder) {
+    public FakeStoreProductServiceImpl(FakeStoreClient fakeStoreClient, RestTemplateBuilder restTemplateBuilder) {
+        this.fakeStoreClient = fakeStoreClient;
         this.restTemplateBuilder = restTemplateBuilder;
     }
 
-    private <T> ResponseEntity<T> requestForEntity(String url, @Nullable Object request, Class<T> responseType, Object... uriVariables) throws RestClientException {
+    private  <T> ResponseEntity<T> requestForEntity(String url, @Nullable Object request, Class<T> responseType, Object... uriVariables) throws RestClientException {
         RestTemplate restTemplate = restTemplateBuilder.build();
         RequestCallback requestCallback = restTemplate.httpEntityCallback(request, responseType);
         ResponseExtractor<ResponseEntity<T>> responseExtractor = restTemplate.responseEntityExtractor(responseType);
         return restTemplate.execute(url, HttpMethod.PUT, requestCallback, responseExtractor, uriVariables);
     }
+
 
     private Product convertFakeProductDtoToProduct(FakeStoreProductDto productDto) {
         Product product = new Product();
@@ -51,8 +54,7 @@ public class FakeStoreProductServiceImpl implements ProductService{
 
     @Override
     public List<Product> getProducts() {
-        RestTemplate restTemplate = restTemplateBuilder.build();
-        ResponseEntity<FakeStoreProductDto[]> response = restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreProductDto[].class);
+        ResponseEntity<FakeStoreProductDto[]> response = fakeStoreClient.getProducts();
         List<Product> list = new ArrayList<>();
         for(Object obj : response.getBody()) {
             FakeStoreProductDto productDto = (FakeStoreProductDto) obj;
@@ -95,6 +97,7 @@ public class FakeStoreProductServiceImpl implements ProductService{
         fakeStoreProductDto.setCategory(product.getCategory().getCategoryName());
         ResponseEntity<FakeStoreProductDto> response = requestForEntity("https://fakestoreapi.com/products/{productId}", fakeStoreProductDto, FakeStoreProductDto.class, productId );
         return convertFakeProductDtoToProduct(response.getBody());
+
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.abinash.eCommerce.services;
 
-import com.abinash.eCommerce.dtos.FakeStoreProductDto;
+import com.abinash.eCommerce.clients.FakeStoreProductDto;
 import com.abinash.eCommerce.models.Category;
 import com.abinash.eCommerce.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
